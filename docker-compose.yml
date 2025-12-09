@@ -1,0 +1,24 @@
+version: "3.3"
+
+services:
+  backend:
+    build: ./backend
+    container_name: tpbackend
+    ports:
+      - "3001:3001"
+    networks:
+      - webnet
+
+  frontend:
+    build: ./frontend
+    container_name: tpfrontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - webnet
+
+networks:
+  webnet:
+

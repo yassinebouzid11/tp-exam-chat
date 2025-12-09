@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini Chat</title>
+  <style>
+    body { font-family: Arial; max-width: 500px; margin: auto; padding: 20px; }
+    #messages { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+    input, button { padding: 10px; width: 100%; margin-top: 5px; }
+  </style>
+</head>
+<body>
+
+<h2>Mini Chat</h2>
+
+<input id="pseudo" placeholder="Votre pseudo">
+<div id="messages"></div>
+
+<input id="message" placeholder="Tapez un message">
+<button onclick="sendMessage()">Envoyer</button>
+
+<script>
+const API_URL = "http://localhost:3001/api/messages";
+
+
+async function loadMessages() {
+  const res = await fetch(API_URL);
+  const data = await res.json();
+  const box = document.getElementById("messages");
+  box.innerHTML = data.map(
+    m => `<p><strong>${m.author}</strong> (${m.time}) : ${m.content}</p>`
+  ).join("");
+}
+
+async function sendMessage() {
+  const author = document.getElementById("pseudo").value;
+  const content = document.getElementById("message").value;
+  if (!author || !content) return alert("Pseudo + message obligatoires");
+
+  await fetch(API_URL, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ author, content })
+  });
+
+  document.getElementById("message").value = "";
+  loadMessages();
+}
+
+setInterval(loadMessages, 3000);
+loadMessages();
+</script>
+
+</body>
+</html>
+
